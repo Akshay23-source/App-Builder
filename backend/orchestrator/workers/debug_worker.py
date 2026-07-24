@@ -45,7 +45,9 @@ def run_debug(project_id: str, prompt: str, task_key: str):
             message=f"Build Attempt #{attempt}/{max_retries} executing..."
         )
 
-        build_success, build_logs = asyncio.run(runner.run_build_check(project_id))
+        from backend.shared.utils import run_async
+
+        build_success, build_logs = run_async(runner.run_build_check(project_id))
         
         if build_success:
             state_manager.publish_event(
@@ -66,7 +68,7 @@ def run_debug(project_id: str, prompt: str, task_key: str):
             )
             
             debug_agent = DebugAgent()
-            repaired_files = asyncio.run(
+            repaired_files = run_async(
                 debug_agent.fix_errors(user_prompt=prompt, current_files=current_files, error_logs=build_logs)
             )
             
@@ -99,4 +101,5 @@ def run_debug(project_id: str, prompt: str, task_key: str):
 
     # Next step: Dispatch Documentation Worker
     from backend.orchestrator.workers.docs_worker import run_docs
-    run_docs.delay(project_id, prompt, "generate_docs")
+    from backend.orchestrator.dispatcher import dispatch_task
+    dispatch_task(run_docs, project_id, prompt, "generate_docs")

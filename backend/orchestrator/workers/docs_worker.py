@@ -18,8 +18,10 @@ def run_docs(project_id: str, prompt: str, task_key: str):
         message="Documentation Agent is writing project README.md and component architecture specs..."
     )
 
+    from backend.shared.utils import run_async
+
     docs_agent = DocsAgent()
-    docs = asyncio.run(docs_agent.generate_documentation(user_prompt=prompt))
+    docs = run_async(docs_agent.generate_documentation(user_prompt=prompt))
 
     state_manager.update_task_status(project_id, task_key, TaskStatus.SUCCESS, output=docs)
     

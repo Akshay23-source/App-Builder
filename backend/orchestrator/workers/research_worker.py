@@ -29,8 +29,10 @@ def run_research(project_id: str, prompt: str, task_key: str):
     finally:
         db.close()
 
+    from backend.shared.utils import run_async
+
     agent = ResearchAgent()
-    specs = asyncio.run(agent.research(user_prompt=prompt, task_metadata=task_metadata))
+    specs = run_async(agent.research(user_prompt=prompt, task_metadata=task_metadata))
 
     state_manager.update_task_status(project_id, task_key, TaskStatus.SUCCESS, output=specs)
     state_manager.publish_event(
@@ -44,4 +46,5 @@ def run_research(project_id: str, prompt: str, task_key: str):
 
     # Next step: Dispatch CodeGen Worker
     from backend.orchestrator.workers.codegen_worker import run_codegen
-    run_codegen.delay(project_id, prompt, "generate_code")
+    from backend.orchestrator.dispatcher import dispatch_task
+    dispatch_task(run_codegen, project_id, prompt, "generate_code")

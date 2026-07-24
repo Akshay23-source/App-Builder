@@ -12,7 +12,8 @@ export default function ProjectPreviewPage() {
   const [deviceMode, setDeviceMode] = useState<"desktop" | "mobile">("desktop");
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const previewTargetUrl = `/api/v1/projects/${projectId}/preview`;
+  const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const previewTargetUrl = `${apiBase}/api/v1/projects/${projectId}/preview`;
 
   return (
     <div className="max-w-7xl mx-auto py-6 px-6 space-y-4">

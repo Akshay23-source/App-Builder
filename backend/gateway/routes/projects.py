@@ -12,6 +12,7 @@ from backend.shared.schemas import (
 )
 from backend.gateway.auth.firebase_verify import verify_firebase_token
 from backend.orchestrator.workers.planner_worker import run_planner
+from backend.orchestrator.dispatcher import dispatch_task
 from backend.shared.config import settings
 from backend.shared.logging_config import logger
 
@@ -50,11 +51,11 @@ async def create_project(
     await db.commit()
     await db.refresh(project)
 
-    # Dispatch Celery Planner Worker
+    # Dispatch Planner Worker
     try:
-        run_planner.delay(project_id=project.id, prompt=project.prompt)
+        dispatch_task(run_planner, project_id=project.id, prompt=project.prompt)
     except Exception as e:
-        logger.error(f"Failed to queue Celery planner worker: {e}")
+        logger.error(f"Failed to dispatch planner worker: {e}")
 
     return ProjectResponse.model_validate(project)
 

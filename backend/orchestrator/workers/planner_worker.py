@@ -7,6 +7,8 @@ from backend.db.session import SyncSessionLocal
 from backend.db.models import Project, Task
 from backend.shared.logging_config import logger
 
+from backend.shared.utils import run_async
+
 @celery_app.task(name="planner_worker.execute")
 def run_planner(project_id: str, prompt: str):
     logger.info(f"[PlannerWorker] Starting planning phase for project {project_id}")
@@ -19,7 +21,7 @@ def run_planner(project_id: str, prompt: str):
     )
 
     planner = PlannerAgent()
-    dag = asyncio.run(planner.plan(project_id=project_id, user_prompt=prompt))
+    dag = run_async(planner.plan(project_id=project_id, user_prompt=prompt))
 
     # Persist DAG task nodes to DB
     db = SyncSessionLocal()
@@ -54,4 +56,5 @@ def run_planner(project_id: str, prompt: str):
 
     # Dispatch initial ready tasks (Research worker)
     from backend.orchestrator.workers.research_worker import run_research
-    run_research.delay(project_id, prompt, "research_design")
+    from backend.orchestrator.dispatcher import dispatch_task
+    dispatch_task(run_research, project_id, prompt, "research_design")

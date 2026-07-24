@@ -5,14 +5,17 @@ from datetime import datetime
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from backend.db.session import SyncSessionLocal
-from backend.db.models import User, Project, Task, AgentLog, ProjectFile
+from backend.db.session import SyncSessionLocal, sync_engine
+from backend.db.models import Base, User, Project, Task, AgentLog, ProjectFile
 from backend.shared.schemas import ProjectStatus, TaskStatus, AgentRole
 
 def seed():
+    print("Initializing database tables...")
+    Base.metadata.create_all(bind=sync_engine)
+    
     db = SyncSessionLocal()
     try:
-        print("Seeding demo project data into Postgres...")
+        print("Seeding demo project data into database...")
         user = db.query(User).filter(User.firebase_uid == "demo_user_1").first()
         if not user:
             user = User(

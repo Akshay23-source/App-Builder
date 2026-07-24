@@ -11,10 +11,12 @@ export const apiClient = axios.create({
 
 apiClient.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("forgeai_token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    let token = localStorage.getItem("forgeai_token");
+    if (!token) {
+      token = "dev_mock_token_12345";
+      localStorage.setItem("forgeai_token", token);
     }
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });

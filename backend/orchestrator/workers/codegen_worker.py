@@ -30,8 +30,10 @@ def run_codegen(project_id: str, prompt: str, task_key: str):
     finally:
         db.close()
 
+    from backend.shared.utils import run_async
+
     agent = CodeGenAgent()
-    codegen_output = asyncio.run(agent.generate_code(user_prompt=prompt, research_specs=research_specs))
+    codegen_output = run_async(agent.generate_code(user_prompt=prompt, research_specs=research_specs))
 
     # Write files to physical sandbox workspace directory
     project_dir = runner.write_project_files(project_id, codegen_output.files)
@@ -64,4 +66,5 @@ def run_codegen(project_id: str, prompt: str, task_key: str):
 
     # Next step: Dispatch Debug Worker to verify build inside sandbox
     from backend.orchestrator.workers.debug_worker import run_debug
-    run_debug.delay(project_id, prompt, "debug_build")
+    from backend.orchestrator.dispatcher import dispatch_task
+    dispatch_task(run_debug, project_id, prompt, "debug_build")
