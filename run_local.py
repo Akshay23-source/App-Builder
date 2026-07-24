@@ -14,7 +14,7 @@ def main():
     print(" - Task Execution:       In-Process Async Worker DAG")
     print("=================================================================")
 
-    backend_cmd = [sys.executable, "-m", "uvicorn", "backend.gateway.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    backend_cmd = [sys.executable, "-m", "uvicorn", "api.index:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
     frontend_cmd = ["cmd", "/c", "cd frontend && npm run dev"] if os.name == "nt" else ["bash", "-c", "cd frontend && npm run dev"]
 
     processes = []
