@@ -1,2 +1,2 @@
-[tool.fastapi]
+[tool.vercel]
 entrypoint = "backend.gateway.main:app"
