@@ -44,6 +44,10 @@ app.include_router(users.router, prefix=settings.API_V1_STR)
 app.include_router(projects.router, prefix=settings.API_V1_STR)
 app.include_router(build_stream.router)
 
+@app.get("/")
+async def root():
+    return {"message": "ForgeAI API Gateway is running!"}
+
 @app.get("/health")
 async def health_check():
     return {
