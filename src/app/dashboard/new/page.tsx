@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { apiClient } from "@/lib/apiClient";
 import PromptInput from "@/components/PromptInput";
 import { Card } from "@/components/ui/primitives";
 import { Sparkles, Layers } from "lucide-react";
 
-export default function NewProjectPage() {
+function NewProjectForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +37,7 @@ export default function NewProjectPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-16 px-6 space-y-8">
+    <>
       <div className="text-center space-y-3">
         <div className="w-12 h-12 rounded-2xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center mx-auto border border-indigo-500/30">
           <Sparkles className="w-6 h-6" />
@@ -57,6 +57,16 @@ export default function NewProjectPage() {
       <Card className="p-8">
         <PromptInput onSubmit={handleSubmitPrompt} isLoading={isLoading} />
       </Card>
+    </>
+  );
+}
+
+export default function NewProjectPage() {
+  return (
+    <div className="max-w-4xl mx-auto py-16 px-6 space-y-8">
+      <Suspense fallback={<div className="text-white text-center">Loading...</div>}>
+        <NewProjectForm />
+      </Suspense>
     </div>
   );
 }
