@@ -5,7 +5,7 @@ import { Sparkles, ArrowRight, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/primitives";
 
 interface PromptInputProps {
-  onSubmit: (prompt: str) => void;
+  onSubmit: (prompt: string) => void;
   isLoading?: boolean;
 }
 
