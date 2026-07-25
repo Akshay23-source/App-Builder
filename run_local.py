@@ -15,7 +15,7 @@ def main():
     print("=================================================================")
 
     backend_cmd = [sys.executable, "-m", "uvicorn", "api.index:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
-    frontend_cmd = ["cmd", "/c", "cd frontend && npm run dev"] if os.name == "nt" else ["bash", "-c", "cd frontend && npm run dev"]
+    frontend_cmd = ["cmd", "/c", "npm run dev:frontend"] if os.name == "nt" else ["bash", "-c", "npm run dev:frontend"]
 
     processes = []
     try:
